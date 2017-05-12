@@ -4,13 +4,34 @@ import os
 import sys
 import json
 import getopt
+import socket
+
+def form_ip(ip):
+    iparray4 = ip.split('.')
+    iparray6 = ip.split(':')
+    str = ""
+    if len(iparray4) > 1:
+        # ipv4 address
+        for i in iparray4:
+            str += "%02x" % int(i)
+    elif len(iparray6) > 1:
+        for i in range(0, len(iparray6) - 1):
+            if iparray6[i] != "":
+                str += "{:0>4}".format(iparray6[i])
+            else:
+                for j in range(0, 9 - len(iparray6)):
+                    str += "{:0>4}".format(iparray6[i])
+        str += "{:0>4}".format(iparray6[len(iparray6)-1])
+    return str
 
 def check_target(t):
     for i in range(0, len(t)):
         if i["asn"] != "":
             # check asn
+            return False
         if i["hostname"] != "":
             # check RP's hostname
+            return False
     return True
 
 def slurm_deal_file(file_path):
@@ -27,21 +48,32 @@ def slurm_deal_file(file_path):
         return
 
     # check slurm target
-    if !check_target(slurm["slurmTarget"]):
+    if check_target(slurm["slurmTarget"]) != True:
         return
 
     filter_list = slurm["validationOutputFilters"]
     assertions = slurm["locallyAddedAssertions"]
 
-    try:
-        pass
-    except Exception as e:
-        raise
+    if filter_list != "":
+        # 循环处理所有的过滤条目
+        prefixFilters = filter_list["prefixFilters"]
+        bgpsecFilters = filter_list["bgpsecFilters"]
+        for item in prefixFilters:
+            # 如果prefix不能被分割成两个字符串，说明格式错误
+            try:
+                prefix, prefix_length = item["prefix"].split('/')
+            except Exception:
+                print "prefix syntax error"
+                continue
+            asn = item["asn"]
+            # asn格式应该为整数
+            if not isinstance(asn, int):
+                print "asn syntax error"
+                continue
+
 
 def slurm_deal_dir(file_dir):
     for root, dirs, files in os.walk(file_dir):
-        for d in dirs:
-            slurm_deal_dir(os.path.join(root, d))
         for f in files:
             slurm_deal_file(os.path.join(root, f))
 
