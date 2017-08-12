@@ -2,7 +2,16 @@
        "slurmVersion": 1,
        "slurmTarget":[
          {
-           "asn":65536
+           "asn":2
+         },
+         {
+           "asn":4
+         },
+         {
+           "asn":3
+         },
+         {
+           "asn":5
          },
          {
            "hostname":"rpki.example.com"
