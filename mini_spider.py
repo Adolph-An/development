@@ -73,7 +73,7 @@ def get_config_file():
     config_file = None
     for o, a in opts:
         if o == "-v":
-            print ("mini_spider version: 0.1")
+            print ("mini_spider version: 0.1, by An ChunLin")
         elif o in ("-h", "--help"):
             usage()
             sys.exit()
@@ -205,17 +205,18 @@ def spider_internal(url, depth):
     for link in page_link_list.list:
         if target_url_pattern.match(link):
             formatted_url = get_formatted_url(url, link)
-            thread_spider = threading.Thread( \
-                            target=spider_start, \
+            thread_spider = threading.Thread(
+                            target=spider_start,
                             args=(formatted_url, depth+1,))
             thread_spider.start()
 
 def spider_start(url, depth):
-    """Spider start with `url`
+    """Spider start with `url` `depth`
 
     Args:
-        url
-        depth
+        url: url to download page
+        depth: current target page's depth.
+            The depth of urls in the seed file is 0.
 
     Return:
         None
@@ -264,7 +265,8 @@ def main(config_file):
 
     # Config logging module
     try:
-        fmt = "%(asctime)s %(filename)s[%(lineno)-3s]: %(levelname)-8s %(message)s"
+        fmt = ("%(asctime)s %(filename)s[%(lineno)-3s]: "
+                "%(levelname)-8s %(message)s")
         logging.basicConfig(level=logging.DEBUG,
                             format=fmt,
                             datefmt='%H:%M:%S',
@@ -272,11 +274,9 @@ def main(config_file):
                             filemode='w')
         logger = logging.getLogger('')
         formatter = logging.Formatter(fmt)
-        #log_file_handler.setFormatter(formatter)
         log_stream_handler = logging.StreamHandler()
         log_stream_handler.setFormatter(formatter)
         log_stream_handler.setLevel(logging.INFO)
-        #logger.addHandler(log_file_handler)
         logger.addHandler(log_stream_handler)
     except logging.ERROR, e:
         print ("Logging Error")
@@ -323,8 +323,8 @@ def main(config_file):
         return
 
     for url_line in url_file:
-        thread_spider = threading.Thread( \
-                        target=spider_start, \
+        thread_spider = threading.Thread(
+                        target=spider_start,
                         args=(url_line, 0,))
         thread_spider.start()
 
