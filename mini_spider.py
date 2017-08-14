@@ -6,6 +6,11 @@ Mini spider
 Description:
     This file implement mini spider by multi thread
 """
+#
+# modification history:
+# ---------------------
+# 2017/08/14, by An Chun Lin, Create
+#
 
 import os
 import sys
